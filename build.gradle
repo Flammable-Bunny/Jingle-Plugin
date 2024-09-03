@@ -21,6 +21,7 @@ compileJava {
 }
 
 dependencies {
+    // Use the latest version of Jingle (0.1.3)
     implementation 'com.github.DuncanRuns:Jingle:0.1.3'
 }
 
