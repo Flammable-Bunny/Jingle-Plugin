@@ -10,6 +10,9 @@ import xyz.duncanruns.jingle.plugin.PluginEvents;
 import xyz.duncanruns.jingle.plugin.PluginHotkeys;
 import xyz.duncanruns.jingle.plugin.PluginManager;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,7 +30,7 @@ public class ExamplePlugin {
     public static void initialize() {
         // This gets run once when Jingle launches
 
-        JingleGUI.addPluginTab("Example Plugin", new ExamplePluginPanel().mainPanel);
+        JingleGUI.addPluginTab("NBT Projector", new ExamplePluginPanel().mainPanel);
         PluginHotkeys.addHotkeyAction("My Awesome Hotkey", () -> Jingle.log(Level.INFO, "(Example Plugin) Awesome hotkey pressed!!!"));
 
         AtomicLong timeTracker = new AtomicLong(System.currentTimeMillis());
@@ -35,9 +38,9 @@ public class ExamplePlugin {
         PluginEvents.END_TICK.register(() -> {
             // This gets run every tick (1 ms)
             long currentTime = System.currentTimeMillis();
-            if (currentTime - timeTracker.get() > 3000) {
-                // This gets ran every 3 seconds
-                // Jingle.log(Level.INFO, "Example Plugin ran for another 3 seconds.");
+            if (currentTime - timeTracker.get() > 1000) {
+                // Capture screen region every second
+                captureAndDisplayNBTPercentages();
                 timeTracker.set(currentTime);
             }
         });
@@ -50,6 +53,24 @@ public class ExamplePlugin {
         PluginEvents.ENTER_WORLD.register(() -> {
             Jingle.log(Level.INFO, "ExamplePlugin: World has been entered!");
         });
-        Jingle.log(Level.INFO, "Example Plugin Initialized");
+        Jingle.log(Level.INFO, "NBT Projector Plugin Initialized");
+    }
+
+    private static void captureAndDisplayNBTPercentages() {
+        try {
+            // Define the region of interest (replace with actual coordinates)
+            Rectangle screenRect = new Rectangle(100, 100, 200, 100); // Example coordinates
+            Robot robot = new Robot();
+            BufferedImage screenCapture = robot.createScreenCapture(screenRect);
+
+            // Create a JFrame to display the capture
+            JFrame frame = new JFrame("NBT Percentages");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.add(new JLabel(new ImageIcon(screenCapture)));
+            frame.pack();
+            frame.setVisible(true);
+        } catch (Exception e) {
+            Jingle.log(Level.ERROR, "Failed to capture NBT percentages: " + e.getMessage());
+        }
     }
 }
